@@ -3,238 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>World Cup 2026 - Road to the Final Predictor</title>
+    <title>World Cup 2026 - Ultimate Predictor Hub</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f7f6; color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 100%; margin: 0 auto; padding: 10px; }
-        h1, h2 { text-align: center; color: #1b5e20; margin-bottom: 5px; }
-        .subtitle { text-align: center; color: #666; margin-top: 0; margin-bottom: 30px; }
+        .container { max-width: 1400px; margin: 0 auto; }
         
-        /* Full Horizontal Scroll Bracket Layout */
-        .bracket-view { display: flex; gap: 30px; align-items: flex-start; margin: 20px 0; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow-x: auto; white-space: nowrap; }
+        /* Navigation Tabs Styling */
+        .tab-navigation { display: flex; justify-content: center; background: #1b5e20; border-radius: 8px 8px 0 0; padding: 10px 10px 0 10px; gap: 5px; }
+        .tab-btn { background: #2e7d32; color: #a5d6a7; border: none; padding: 12px 24px; font-size: 16px; font-weight: bold; border-radius: 6px 6px 0 0; cursor: pointer; transition: all 0.2s; }
+        .tab-btn:hover { background: #388e3c; color: white; }
+        .tab-btn.active { background: #ffffff; color: #1b5e20; box-shadow: 0 -2px 5px rgba(0,0,0,0.1); }
+        
+        .tab-content { background: #ffffff; padding: 30px; border-radius: 0 0 8px 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: none; }
+        .tab-content.active { display: block; }
+
+        h1, h2 { text-align: center; color: #1b5e20; margin-top: 0; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
+        
+        /* Bracket Layout */
+        .bracket-view { display: flex; gap: 30px; align-items: flex-start; margin: 20px 0; background: #fafafa; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0; overflow-x: auto; }
         .round { display: flex; flex-direction: column; justify-content: space-around; min-width: 280px; height: 1400px; }
         .round-title { text-align: center; color: #2e7d32; font-size: 16px; font-weight: bold; border-bottom: 2px solid #2e7d32; padding-bottom: 5px; margin-bottom: 15px; text-transform: uppercase; }
         
-        .matchup { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px; margin: 10px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: inline-block; vertical-align: top; width: 260px; }
+        .matchup { background: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px; margin: 10px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); width: 260px; }
         .match-id { font-size: 11px; color: #888; font-weight: bold; text-transform: uppercase; margin-bottom: 6px; border-bottom: 1px dashed #ddd; padding-bottom: 3px; }
         .team-row { display: flex; justify-content: space-between; align-items: center; margin: 8px 0; gap: 8px; }
         
-        /* Dynamic Name Blocks and Input Options */
-        .team-name-display { font-weight: 600; font-size: 13px; color: #222; width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; }
+        .team-name-display { font-weight: 600; font-size: 13px; color: #222; width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .team-fallback-input { width: 135px; padding: 4px 6px; border: 1px dashed #b2dfdb; border-radius: 4px; font-size: 12px; background: #e8f5e9; }
-        .team-fallback-input:focus { border-color: #2e7d32; outline: none; background: #fff; }
         
         .score-input { width: 42px; padding: 5px; text-align: center; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; }
         
-        /* Expandable Panels for Tie Scenarios */
+        /* Tie & Penalty Containers */
         .extra-panel { background: #efebe9; border-radius: 6px; padding: 8px; margin-top: 8px; font-size: 12px; display: none; border-left: 3px solid #8d6e63; }
         .pk-panel { background: #e1f5fe; border-left-color: #0288d1; }
         .visible { display: block !important; }
-        .panel-title { font-weight: bold; margin-bottom: 4px; display: block; color: #4e342e; }
-        .pk-panel .panel-title { color: #01579b; }
         
-        /* Leaderboard and Submission Buttons */
+        /* Tables & Leaderboard */
         table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
         th { background-color: #2e7d32; color: white; }
-        tr:nth-child(even) { background-color: #f9f9f9; }
+        tr:nth-child(even) { background-color: #e8f5e9; } /* Light Green Alternating Rows */
         
-        .submit-btn { display: block; width: 250px; margin: 30px auto; padding: 14px; background: #2e7d32; color: white; border: none; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .submit-btn:hover { background: #1b5e20; }
-        .input-group { text-align: center; margin-bottom: 25px; }
-        .name-field { padding: 12px; width: 300px; border-radius: 6px; border: 1px solid #ccc; font-size: 16px; text-align: center; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
+        /* Admin Panel Elements */
+        .admin-card { background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #cfd8dc; max-width: 600px; margin: 0 auto 20px auto; }
+        .admin-input { width: 100%; padding: 10px; margin: 8px 0; border-radius: 4px; border: 1px solid #b0bec5; box-sizing: border-box; }
+        
+        .btn { display: block; width: 250px; margin: 20px auto; padding: 14px; color: white; border: none; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-submit { background: #2e7d32; }
+        .btn-submit:hover { background: #1b5e20; }
+        .btn-danger { background: #d32f2f; width: 100%; margin: 8px 0; border-radius: 4px; }
+        .btn-danger:hover { background: #b71c1c; }
+        .btn-alt { background: #37474f; width: 100%; margin: 8px 0; border-radius: 4px; }
+        .btn-alt:hover { background: #263238; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🏆 World Cup 2026 - Knockout Stage</h1>
-    <p class="subtitle">Complete Prediction Tree: Round of 16 ➔ Quarterfinals ➔ Semifinals ➔ Final</p>
     
-    <div class="input-group">
-        <input type="text" id="participantName" class="name-field" placeholder="Enter Your Name to Submit Tree" required>
+    <div class="tab-navigation">
+        <button class="tab-btn active" onclick="switchTab('bracket-tab')">📋 Submit Prediction</button>
+        <button class="tab-btn" onclick="switchTab('leaderboard-tab')">📊 Global Standings</button>
+        <button class="tab-btn" onclick="switchTab('admin-tab')">⚙️ Admin Panel</button>
     </div>
 
-    <form id="bracketForm">
-        <div class="bracket-view">
-            
-            <!-- COLUMN 1: ROUND OF 16 -->
-            <div class="round">
-                <div class="round-title">Round of 16</div>
-                
-                <!-- Match 89 -->
-                <div class="matchup" data-match="89" data-next-match="97" data-next-slot="A">
-                    <div class="match-id">Match 89</div>
-                    <div class="team-row"><span class="team-name-display" id="m89-tA">Morocco</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
-                    <div class="team-row"><span class="team-name-display" id="m89-tB">Canada</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
-                </div>
-
-                <!-- Match 90 -->
-                <div class="matchup" data-match="90" data-next-match="97" data-next-slot="B">
-                    <div class="match-id">Match 90</div>
-                    <div class="team-row"><span class="team-name-display" id="m90-tA">Paraguay</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
-                    <div class="team-row"><span class="team-name-display" id="m90-tB">France</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
-                </div>
-
-                <!-- Match 91 -->
-                <div class="matchup" data-match="91" data-next-match="99" data-next-slot="A">
-                    <div class="match-id">Match 91</div>
-                    <div class="team-row"><span class="team-name-display" id="m91-tA">Brazil</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
-                    <div class="team-row"><span class="team-name-display" id="m91-tB">Norway</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
-                </div>
-
-                <!-- Match 92 -->
-                <div class="matchup" data-match="92" data-next-match="99" data-next-slot="B">
-                    <div class="match-id">Match 92</div>
-                    <div class="team-row"><span class="team-name-display" id="m92-tA">Mexico</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
-                    <div class="team-row"><span class="team-name-display" id="m92-tB">England</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
-                </div>
-
-                <!-- Match 93 -->
-                <div class="matchup" data-match="93" data-next-match="98" data-next-slot="A">
-                    <div class="match-id">Match 93</div>
-                    <div class="team-row"><input type="text" class="team-fallback-input" id="m93-tA-input" placeholder="Winner Match 83" required><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
-                    <div class="team-row"><span class="team-name-display" id="m93-tB">Spain</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
-                </div>
-
-                <!-- Match 94 -->
-                <div class="matchup" data-match="94" data-next-match="98" data-next-slot="B">
-                    <div class="match-id">Match 94</div>
-                    <div class="team-row"><span class="team-name-display" id="m94-tA">United States</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
-                    <div class="team-row"><span class="team-name-display" id="m94-tB">Belgium</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
-                </div>
-
-                <!-- Match 95 -->
-                <div class="matchup" data-match="95" data-next-match="100" data-next-slot="A">
-                    <div class="match-id">Match 95</div>
-                    <div class="team-row"><input type="text" class="team-fallback-input" id="m95-tA-input" placeholder="Winner Match 86" required><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
-                    <div class="team-row"><input type="text" class="team-fallback-input" id="m95-tB-input" placeholder="Winner Match 88" required><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
-                </div>
-
-                <!-- Match 96 -->
-                <div class="matchup" data-match="96" data-next-match="100" data-next-slot="B">
-                    <div class="match-id">Match 96</div>
-                    <div class="team-row"><span class="team-name-display" id="m96-tA">Switzerland</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
-                    <div class="team-row"><input type="text" class="team-fallback-input" id="m96-tB-input" placeholder="Winner Match 87" required><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
-                </div>
-            </div>
-
-            <!-- COLUMN 2: QUARTERFINALS -->
-            <div class="round">
-                <div class="round-title">Quarterfinals</div>
-                
-                <!-- Match 97 -->
-                <div class="matchup" data-match="97" data-next-match="101" data-next-slot="A">
-                    <div class="match-id">Match 97</div>
-                    <div class="team-row"><span class="team-name-display" id="m97-tA">Winner 89</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
-                    <div class="team-row"><span class="team-name-display" id="m97-tB">Winner 90</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
-                </div>
-
-                <!-- Match 98 -->
-                <div class="matchup" data-match="98" data-next-match="101" data-next-slot="B">
-                    <div class="match-id">Match 98</div>
-                    <div class="team-row"><span class="team-name-display" id="m98-tA">Winner 93</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
-                    <div class="team-row"><span class="team-name-display" id="m98-tB">Winner 94</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
-                </div>
-
-                <!-- Match 99 -->
-                <div class="matchup" data-match="99" data-next-match="102" data-next-slot="A">
-                    <div class="match-id">Match 99</div>
-                    <div class="team-row"><span class="team-name-display" id="m99-tA">Winner 91</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
-                    <div class="team-row"><span class="team-name-display" id="m99-tB">Winner 92</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
-                </div>
-
-                <!-- Match 100 -->
-                <div class="matchup" data-match="100" data-next-match="102" data-next-slot="B">
-                    <div class="match-id">Match 100</div>
-                    <div class="team-row"><span class="team-name-display" id="m100-tA">Winner 95</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
-                    <div class="team-row"><span class="team-name-display" id="m100-tB">Winner 96</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
-                </div>
-            </div>
-
-            <!-- COLUMN 3: SEMIFINALS -->
-            <div class="round">
-                <div class="round-title">Semifinals</div>
-                
-                <!-- Match 101 -->
-                <div class="matchup" data-match="101" data-next-match="104" data-next-slot="A">
-                    <div class="match-id">Match 101</div>
-                    <div class="team-row"><span class="team-name-display" id="m101-tA">Winner 97</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
-                    <div class="team-row"><span class="team-name-display" id="m101-tB">Winner 98</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
-                </div>
-
-                <!-- Match 102 -->
-                <div class="matchup" data-match="102" data-next-match="104" data-next-slot="B">
-                    <div class="match-id">Match 102</div>
-                    <div class="team-row"><span class="team-name-display" id="m102-tA">Winner 99</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
-                    <div class="team-row"><span class="team-name-display" id="m102-tB">Winner 100</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
-                </div>
-            </div>
-
-            <!-- COLUMN 4: FINAL -->
-            <div class="round">
-                <div class="round-title">Final</div>
-                
-                <!-- Match 104 -->
-                <div class="matchup" data-match="104" data-next-match="none" data-next-slot="none">
-                    <div class="match-id">Match 104</div>
-                    <div class="team-row"><span class="team-name-display" id="m104-tA">Winner 101</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
-                    <div class="team-row"><span class="team-name-display" id="m104-tB">Winner 102</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
-                </div>
-                
-                <div style="text-align: center; margin-top: 20px; background: #e8f5e9; padding: 15px; border-radius: 8px; border: 1px dashed #2e7d32;">
-                    <div style="font-size: 12px; font-weight: bold; color: #1b5e20;">🏆 PROJECTED CHAMPION</div>
-                    <div id="championDisplay" style="font-size: 18px; font-weight: 800; color: #2e7d32; margin-top: 5px;">???</div>
-                </div>
-            </div>
-
+    <div id="bracket-tab" class="tab-content active">
+        <h1>🏆 World Cup 2026 Prediction Bracket</h1>
+        <p class="subtitle">Complete your knockout tree path. Once you submit your distinct profile name, changes are locked.</p>
+        
+        <div style="text-align: center; margin-bottom: 25px;">
+            <input type="text" id="participantName" style="padding: 12px; width: 300px; border-radius: 6px; border: 1px solid #ccc; font-size: 16px; text-align: center;" placeholder="Enter Your Full Name" required>
         </div>
 
-        <button type="submit" class="submit-btn">Submit Entire Tournament Tree</button>
-    </form>
+        <form id="bracketForm">
+            <div class="bracket-view">
+                <div class="round">
+                    <div class="round-title">Round of 16</div>
+                    
+                    <div class="matchup" data-match="89" data-next-match="97" data-next-slot="A">
+                        <div class="match-id">Match 89</div>
+                        <div class="team-row"><span class="team-name-display" id="m89-tA">Morocco</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
+                        <div class="team-row"><span class="team-name-display" id="m89-tB">Canada</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
+                    </div>
+                    <div class="matchup" data-match="90" data-next-match="97" data-next-slot="B">
+                        <div class="match-id">Match 90</div>
+                        <div class="team-row"><span class="team-name-display" id="m90-tA">Paraguay</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
+                        <div class="team-row"><span class="team-name-display" id="m90-tB">France</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
+                    </div>
+                    <div class="matchup" data-match="91" data-next-match="99" data-next-slot="A">
+                        <div class="match-id">Match 91</div>
+                        <div class="team-row"><span class="team-name-display" id="m91-tA">Brazil</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
+                        <div class="team-row"><span class="team-name-display" id="m91-tB">Norway</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
+                    </div>
+                    <div class="matchup" data-match="92" data-next-match="99" data-next-slot="B">
+                        <div class="match-id">Match 92</div>
+                        <div class="team-row"><span class="team-name-display" id="m92-tA">Mexico</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
+                        <div class="team-row"><span class="team-name-display" id="m92-tB">England</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
+                    </div>
+                    <div class="matchup" data-match="93" data-next-match="98" data-next-slot="A">
+                        <div class="match-id">Match 93</div>
+                        <div class="team-row"><input type="text" class="team-fallback-input" id="m93-tA-input" placeholder="Winner Match 83" required><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
+                        <div class="team-row"><span class="team-name-display" id="m93-tB">Spain</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
+                    </div>
+                    <div class="matchup" data-match="94" data-next-match="98" data-next-slot="B">
+                        <div class="match-id">Match 94</div>
+                        <div class="team-row"><span class="team-name-display" id="m94-tA">United States</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
+                        <div class="team-row"><span class="team-name-display" id="m94-tB">Belgium</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
+                    </div>
+                    <div class="matchup" data-match="95" data-next-match="100" data-next-slot="A">
+                        <div class="match-id">Match 95</div>
+                        <div class="team-row"><input type="text" class="team-fallback-input" id="m95-tA-input" placeholder="Winner Match 86" required><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
+                        <div class="team-row"><input type="text" class="team-fallback-input" id="m95-tB-input" placeholder="Winner Match 88" required><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
+                    </div>
+                    <div class="matchup" data-match="96" data-next-match="100" data-next-slot="B">
+                        <div class="match-id">Match 96</div>
+                        <div class="team-row"><span class="team-name-display" id="m96-tA">Switzerland</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
+                        <div class="team-row"><input type="text" class="team-fallback-input" id="m96-tB-input" placeholder="Winner Match 87" required><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
+                    </div>
+                </div>
 
-    <hr style="border: 0; border-top: 1px solid #ccc; margin: 40px 0;">
+                <div class="round">
+                    <div class="round-title">Quarterfinals</div>
+                    <div class="matchup" data-match="97" data-next-match="101" data-next-slot="A">
+                        <div class="match-id">Match 97</div>
+                        <div class="team-row"><span class="team-name-display" id="m97-tA">Winner 89</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
+                        <div class="team-row"><span class="team-name-display" id="m97-tB">Winner 90</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
+                    </div>
+                    <div class="matchup" data-match="98" data-next-match="101" data-next-slot="B">
+                        <div class="match-id">Match 98</div>
+                        <div class="team-row"><span class="team-name-display" id="m98-tA">Winner 93</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
+                        <div class="team-row"><span class="team-name-display" id="m98-tB">Winner 94</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
+                    </div>
+                    <div class="matchup" data-match="99" data-next-match="102" data-next-slot="A">
+                        <div class="match-id">Match 99</div>
+                        <div class="team-row"><span class="team-name-display" id="m99-tA">Winner 91</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
+                        <div class="team-row"><span class="team-name-display" id="m99-tB">Winner 92</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
+                    </div>
+                    <div class="matchup" data-match="100" data-next-match="102" data-next-slot="B">
+                        <div class="match-id">Match 100</div>
+                        <div class="team-row"><span class="team-name-display" id="m100-tA">Winner 95</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
+                        <div class="team-row"><span class="team-name-display" id="m100-tB">Winner 96</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
+                    </div>
+                </div>
 
-    <h2>📊 Standings Leaderboard</h2>
-    <table>
-        <thead>
-            <tr>
-                <th style="width: 80px;">Rank</th>
-                <th>Participant Name</th>
-                <th style="width: 150px;">Total Score</th>
-            </tr>
-        </thead>
-        <tbody id="leaderboardBody">
-            <!-- Populated via script callback -->
-        </tbody>
-    </table>
+                <div class="round">
+                    <div class="round-title">Semifinals</div>
+                    <div class="matchup" data-match="101" data-next-match="104" data-next-slot="A">
+                        <div class="match-id">Match 101</div>
+                        <div class="team-row"><span class="team-name-display" id="m101-tA">Winner 97</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
+                        <div class="team-row"><span class="team-name-display" id="m101-tB">Winner 98</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
+                    </div>
+                    <div class="matchup" data-match="102" data-next-match="104" data-next-slot="B">
+                        <div class="match-id">Match 102</div>
+                        <div class="team-row"><span class="team-name-display" id="m102-tA">Winner 99</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
+                        <div class="team-row"><span class="team-name-display" id="m102-tB">Winner 100</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
+                    </div>
+                </div>
+
+                <div class="round">
+                    <div class="round-title">Final</div>
+                    <div class="matchup" data-match="104" data-next-match="none" data-next-slot="none">
+                        <div class="match-id">Match 104</div>
+                        <div class="team-row"><span class="team-name-display" id="m104-tA">Winner 101</span><input type="number" class="score-input reg-score" data-team="A" min="0" required></div>
+                        <div class="team-row"><span class="team-name-display" id="m104-tB">Winner 102</span><input type="number" class="score-input reg-score" data-team="B" min="0" required></div>
+                    </div>
+                    <div style="text-align: center; margin-top: 20px; background: #e8f5e9; padding: 15px; border-radius: 8px; border: 1px dashed #2e7d32;">
+                        <div style="font-size: 11px; font-weight: bold; color: #1b5e20;">🏆 YOUR CHAMPION</div>
+                        <div id="championDisplay" style="font-size: 16px; font-weight: bold; color: #2e7d32; margin-top: 5px;">???</div>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-submit">Submit Entire Bracket</button>
+        </form>
+    </div>
+
+    <div id="leaderboard-tab" class="tab-content">
+        <h2>📊 Global Standings Leaderboard</h2>
+        <p class="subtitle">Live ranking computed automatically using your custom rules structure.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Rank</th>
+                    <th>Participant Name</th>
+                    <th style="width: 150px;">Total Score</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboardBody">
+                <tr><td colspan="3" style="text-align:center; color:#777;">Loading live data stream from database...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="admin-tab" class="tab-content">
+        <h2>⚙️ Administrative Control Panel</h2>
+        <p class="subtitle">Requires authorization token phrase stored in your Sheet's "Config" sheet row 2.</p>
+        
+        <div class="admin-card">
+            <h3>Admin Password Authentication</h3>
+            <input type="password" id="adminPassword" class="admin-input" placeholder="Enter Config Token Password">
+        </div>
+
+        <div class="admin-card">
+            <h3>Delete Participant Profile</h3>
+            <input type="text" id="targetDeleteName" class="admin-input" placeholder="Exact Participant Name String">
+            <button class="btn btn-danger" onclick="executeAdminDelete()">Permanently Delete Participant Bracket</button>
+        </div>
+
+        <div class="admin-card">
+            <h3>Input Real Game Scores</h3>
+            <p style="font-size: 13px; color: #556b2f; margin: 0 0 10px 0;">Select a Match ID (89 to 104) to update real results. This runs the calculation loop for the leaderboard.</p>
+            <button class="btn btn-alt" onclick="executeAdminScoreWizard()">Launch Score Input Wizard</button>
+        </div>
+    </div>
+
 </div>
 
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbztzwJqvrKZfW7SJ16y34kNmRGWShvFzuOF8p3pfK6SE_5PvZkmUSQSLvWR1wU8BtWARw/exec";
+    // Paste your deployed web app URL here
+    const API_URL = "https://script.google.com/macros/s/AKfycbztzwJqvrKZfW7SJ16y34kNmRGWShvFzuOF8p3pfK6SE_5PvZkmUSQSLvWR1wU8BtWARw/exec"; 
 
-    // Inject Extra Time and Penalty boxes to ALL matches automatically
+    // Handle Switching Nav tabs view layout
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    // Dynamic Tie Checking & Next Slot Forward Progression Engine Injection Loop
     document.querySelectorAll('.matchup').forEach(match => {
         const etHtml = `
             <div class="extra-panel et-container">
-                <span class="panel-title">⏱️ Extra Time (Accumulated Goals)</span>
-                <div class="team-row">
-                    <span>A:</span> <input type="number" class="score-input et-score" data-team="A" min="0">
-                </div>
-                <div class="team-row">
-                    <span>B:</span> <input type="number" class="score-input et-score" data-team="B" min="0">
-                </div>
+                <strong>⏱️ Extra Time (Accumulated):</strong>
+                <div class="team-row"><span>A:</span> <input type="number" class="score-input et-score" data-team="A" min="0"></div>
+                <div class="team-row"><span>B:</span> <input type="number" class="score-input et-score" data-team="B" min="0"></div>
             </div>
             <div class="extra-panel pk-panel pk-container">
-                <span class="panel-title">⚽ Penalty Shootout Score</span>
-                <div class="team-row">
-                    <span>A:</span> <input type="number" class="score-input pk-score" data-team="A" min="0">
-                </div>
-                <div class="team-row">
-                    <span>B:</span> <input type="number" class="score-input pk-score" data-team="B" min="0">
-                </div>
-            </div>
-        `;
+                <strong>⚽ Penalty Shootout Score:</strong>
+                <div class="team-row"><span>A:</span> <input type="number" class="score-input pk-score" data-team="A" min="0"></div>
+                <div class="team-row"><span>B:</span> <input type="number" class="score-input pk-score" data-team="B" min="0"></div>
+            </div>`;
         match.insertAdjacentHTML('beforeend', etHtml);
 
         const regInputs = match.querySelectorAll('.reg-score');
@@ -243,119 +253,208 @@
         const pkContainer = match.querySelector('.pk-container');
         const pkInputs = match.querySelectorAll('.pk-score');
 
-        // Logic engine to dynamically pass winner strings forward instantly
-        function runProgressionEngine() {
-            // Determine text labels
-            let nameA = "", nameB = "";
-            const textInputA = match.querySelectorAll('.team-row')[0].querySelector('.team-fallback-input');
-            const textInputB = match.querySelectorAll('.team-row')[1].querySelector('.team-fallback-input');
-            
-            nameA = textInputA ? textInputA.value : match.querySelectorAll('.team-row')[0].querySelector('.team-name-display').textContent;
-            nameB = textInputB ? textInputB.value : match.querySelectorAll('.team-row')[1].querySelector('.team-name-display').textContent;
-
-            const rA = parseInt(regInputs[0].value);
-            const rB = parseInt(regInputs[1].value);
-            
-            // Check Tie logic
-            if (!isNaN(rA) && !isNaN(rB) && rA === rB) {
-                etContainer.classList.add('visible');
-                etInputs[0].setAttribute('required', 'true');
-                etInputs[1].setAttribute('required', 'true');
-            } else {
-                etContainer.classList.remove('visible');
-                pkContainer.classList.remove('visible');
-                etInputs.forEach(i => { i.removeAttribute('required'); });
-                pkInputs.forEach(i => { i.removeAttribute('required'); });
-            }
-
-            const eA = parseInt(etInputs[0].value);
-            const eB = parseInt(etInputs[1].value);
-            if (etContainer.classList.contains('visible') && !isNaN(eA) && !isNaN(eB) && eA === eB) {
-                pkContainer.classList.add('visible');
-                pkInputs[0].setAttribute('required', 'true');
-                pkInputs[1].setAttribute('required', 'true');
-            } else {
-                pkContainer.classList.remove('visible');
-                pkInputs.forEach(i => { i.removeAttribute('required'); });
-            }
-
-            // Resolve Winner Name String
-            let winnerStr = "";
-            if (!isNaN(rA) && !isNaN(rB)) {
-                if (rA > rB) winnerStr = nameA;
-                else if (rB > rA) winnerStr = nameB;
-                else if (!isNaN(eA) && !isNaN(eB)) {
-                    if (eA > eB) winnerStr = nameA;
-                    else if (eB > eA) winnerStr = nameB;
-                    else {
-                        const pA = parseInt(pkInputs[0].value);
-                        const pB = parseInt(pkInputs[1].value);
-                        if (!isNaN(pA) && !isNaN(pB)) {
-                            winnerStr = pA > pB ? nameA : nameB;
-                        }
-                    }
-                }
-            }
-
-            // Push forward to next stage node column
-            const nextMatchId = match.dataset.nextMatch;
-            const nextSlot = match.dataset.nextSlot;
-            
-            if (nextMatchId !== "none" && winnerStr !== "") {
-                const targetNode = document.getElementById(`m${nextMatchId}-t${nextSlot}`);
-                if (targetNode) {
-                    targetNode.textContent = winnerStr;
-                    // Trigger progression check on next matchup block downstream
-                    const parentMatch = targetNode.closest('.matchup');
-                    if (parentMatch) {
-                        const event = new Event('input');
-                        parentMatch.querySelector('.reg-score').dispatchEvent(event);
-                    }
-                }
-            } else if (nextMatchId === "none" && winnerStr !== "") {
-                document.getElementById('championDisplay').textContent = winnerStr;
-            }
-        }
-
-        // Add action triggers across all form fields
-        match.addEventListener('input', runProgressionEngine);
-        const fbInputs = match.querySelectorAll('.team-fallback-input');
-        fbInputs.forEach(i => i.addEventListener('input', runProgressionEngine));
-    });
-
-    // Handle Form Processing Data Packaging
-    document.getElementById('bracketForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const name = document.getElementById('participantName').value.trim();
-        if(!name) return alert("Please specify your participant name before submitting.");
-
-        let predictions = [];
-        document.querySelectorAll('.matchup').forEach(match => {
+        function evaluateProgression() {
             const textInputA = match.querySelectorAll('.team-row')[0].querySelector('.team-fallback-input');
             const textInputB = match.querySelectorAll('.team-row')[1].querySelector('.team-fallback-input');
             const nameA = textInputA ? textInputA.value : match.querySelectorAll('.team-row')[0].querySelector('.team-name-display').textContent;
             const nameB = textInputB ? textInputB.value : match.querySelectorAll('.team-row')[1].querySelector('.team-name-display').textContent;
 
+            const rA = parseInt(regInputs[0].value);
+            const rB = parseInt(regInputs[1].value);
+
+            // Handle Regulation Tie State changes
+            if (!isNaN(rA) && !isNaN(rB) && rA === rB) {
+                etContainer.classList.add('visible');
+                etInputs[0].setAttribute('required', 'true');
+                etInputs[1].setAttribute('required', 'true');
+            } else {
+                etContainer.classList.remove('visible'); pkContainer.classList.remove('visible');
+                etInputs.forEach(i => i.removeAttribute('required')); pkInputs.forEach(i => i.removeAttribute('required'));
+            }
+
+            // Handle Extra Time Tie State changes
+            const eA = parseInt(etInputs[0].value);
+            const eB = parseInt(etInputs[1].value);
+            if (etContainer.classList.contains('visible') && !isNaN(eA) && !isNaN(eB) && eA === eB) {
+                pkContainer.classList.add('visible');
+                pkInputs[0].setAttribute('required', 'true'); pkInputs[1].setAttribute('required', 'true');
+            } else {
+                pkContainer.classList.remove('visible'); pkInputs.forEach(i => i.removeAttribute('required'));
+            }
+
+            // Determine Winning String 
+            let winner = "";
+            if (!isNaN(rA) && !isNaN(rB)) {
+                if (rA > rB) winner = nameA;
+                else if (rB > rA) winner = nameB;
+                else if (!isNaN(eA) && !isNaN(eB)) {
+                    if (eA > eB) winner = nameA;
+                    else if (eB > eA) winner = nameB;
+                    else {
+                        const pA = parseInt(pkInputs[0].value); const pB = parseInt(pkInputs[1].value);
+                        if (!isNaN(pA) && !isNaN(pB)) winner = pA > pB ? nameA : nameB;
+                    }
+                }
+            }
+
+            // Forward to downstream slots instantly
+            const nextMatchId = match.dataset.nextMatch;
+            const nextSlot = match.dataset.nextSlot;
+            if (nextMatchId !== "none" && winner !== "") {
+                const target = document.getElementById(`m${nextMatchId}-t${nextSlot}`);
+                if (target) {
+                    target.textContent = winner;
+                    target.closest('.matchup').dispatchEvent(new Event('input'));
+                }
+            } else if (nextMatchId === "none" && winner !== "") {
+                document.getElementById('championDisplay').textContent = winner;
+            }
+        }
+
+        match.addEventListener('input', evaluateProgression);
+        match.querySelectorAll('.team-fallback-input').forEach(i => i.addEventListener('input', evaluateProgression));
+    });
+
+    // Post Tree Form Data submission package out
+    document.getElementById('bracketForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const name = document.getElementById('participantName').value.trim();
+        if(!name) return alert("Please clarify your identity name first!");
+
+        let predictions = [];
+        document.querySelectorAll('.matchup').forEach(match => {
+            const fbA = match.querySelectorAll('.team-row')[0].querySelector('.team-fallback-input');
+            const fbB = match.querySelectorAll('.team-row')[1].querySelector('.team-fallback-input');
+            const nameA = fbA ? fbA.value : match.querySelectorAll('.team-row')[0].querySelector('.team-name-display').textContent;
+            const nameB = fbB ? fbB.value : match.querySelectorAll('.team-row')[1].querySelector('.team-name-display').textContent;
+
             predictions.push(
                 nameA, nameB,
-                match.querySelectorAll('.reg-score')[0].value,
-                match.querySelectorAll('.reg-score')[1].value,
-                match.querySelectorAll('.et-score')[0].value || "",
-                match.querySelectorAll('.et-score')[1].value || "",
-                match.querySelectorAll('.pk-score')[0].value || "",
-                match.querySelectorAll('.pk-score')[1].value || ""
+                match.querySelectorAll('.reg-score')[0].value, match.querySelectorAll('.reg-score')[1].value,
+                match.querySelectorAll('.et-score')[0].value || "", match.querySelectorAll('.et-score')[1].value || "",
+                match.querySelectorAll('.pk-score')[0].value || "", match.querySelectorAll('.pk-score')[1].value || ""
             );
         });
 
-        fetch(API_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify({ action: "submitPrediction", name: name, predictions: predictions })
-        }).then(() => {
-            alert("Success! Your bracket has been verified and securely saved to the database.");
+        fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "submitPrediction", name: name, predictions: predictions }) })
+        .then(() => {
+            alert("Submission complete! If your name already exists, the entry will be discarded by database locking rules.");
             location.reload();
-        }).catch(err => alert("Connection error: " + err));
+        }).catch(err => alert("Error communicating with DB server: " + err));
     });
+
+    // Global Load State Fetches
+    let globalFetchedData = null;
+    window.addEventListener('load', () => {
+        if(API_URL === "YOUR_DEPLOYED_MINI_APPS_SCRIPT_URL_HERE") return;
+        fetch(API_URL).then(res => res.json()).then(data => {
+            globalFetchedData = data;
+            calculateAndRenderLeaderboard(data.participants, data.realScores);
+        });
+    });
+
+    // Programmatic Point Matrices Engine Calculator
+    function calculateAndRenderLeaderboard(participants, realScores) {
+        const tbody = document.getElementById('leaderboardBody');
+        tbody.innerHTML = "";
+        
+        if(!realScores || realScores.length === 0) {
+            participants.forEach((p, idx) => { tbody.innerHTML += `<tr><td>${idx+1}</td><td>${p[1]}</td><td>0 pts</td></tr>`; });
+            return;
+        }
+
+        let positions = [];
+        participants.forEach(p => {
+            const name = p[1];
+            const preds = p.slice(2);
+            let score = 0;
+
+            for(let i=0; i<15; i++) {
+                let offset = i * 8;
+                let p_teamA = preds[offset], p_teamB = preds[offset+1];
+                let p_rA = parseInt(preds[offset+2]), p_rB = parseInt(preds[offset+3]);
+                let p_eA = parseInt(preds[offset+4]), p_eB = parseInt(preds[offset+5]);
+                let p_pA = parseInt(preds[offset+6]), p_pB = parseInt(preds[offset+7]);
+
+                let r_teamA = realScores[offset], r_teamB = realScores[offset+1];
+                let r_rA = parseInt(realScores[offset+2]), r_rB = parseInt(realScores[offset+3]);
+                let r_eA = parseInt(realScores[offset+4]), r_eB = parseInt(realScores[offset+5]);
+                let r_pA = parseInt(realScores[offset+6]), r_pB = parseInt(realScores[offset+7]);
+
+                if(isNaN(r_rA)) continue; // Unplayed game node skipping
+
+                // Correct individual goals (+2 Points per line match)
+                if(p_rA === r_rA) score += 2; if(p_rB === r_rB) score += 2;
+                if(r_rA === r_rB && !isNaN(r_eA)) {
+                    if(p_eA === r_eA) score += 2; if(p_eB === r_eB) score += 2;
+                }
+                if(!isNaN(r_pA)) {
+                    if(p_pA === r_pA) score += 3; if(p_pB === r_pB) score += 3;
+                }
+
+                // Winner determination validation check logic mapping
+                let p_win = p_rA > p_rB ? p_teamA : (p_rB > p_rA ? p_teamB : (p_eA > p_eB ? p_teamA : (p_eB > p_eA ? p_teamB : (p_pA > p_pB ? p_teamA : p_teamB))));
+                let r_win = r_rA > r_rB ? r_teamA : (r_rB > r_rA ? r_teamB : (r_eA > r_eB ? r_teamA : (r_eB > r_eA ? r_teamB : (r_pA > r_pB ? r_teamA : r_teamB))));
+
+                if(p_win && r_win && p_win.trim().toLowerCase() === r_win.trim().toLowerCase()) score += 3;
+            }
+            positions.push({ name: name, points: score });
+        });
+
+        positions.sort((a,b) => b.points - a.points).forEach((row, index) => {
+            tbody.innerHTML += `<tr><td><strong>${index+1}</strong></td><td>${row.name}</td><td><strong>${row.points} pts</strong></td></tr>`;
+        });
+    }
+
+    // Admin Deletions Command Handler
+    function executeAdminDelete() {
+        const pass = document.getElementById('adminPassword').value;
+        const target = document.getElementById('targetDeleteName').value;
+        if(!pass || !target) return alert("Complete the password and target target fields!");
+
+        if(!confirm(`Delete profile entry for: "${target}"?`)) return;
+
+        fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "deleteParticipant", password: pass, targetName: target }) })
+        .then(res => res.json()).then(res => {
+            if(res.status === "DELETED") { alert("User entry dropped successfully!"); location.reload(); }
+            else alert("Error response: " + res.message);
+        });
+    }
+
+    // Admin Scores Input Loop Wizard Handler 
+    function executeAdminScoreWizard() {
+        const pass = document.getElementById('adminPassword').value;
+        if(!pass) return alert("Enter admin authorization password first!");
+        if(!globalFetchedData) return alert("Database array loading, try again in a few seconds.");
+
+        let baseScores = globalFetchedData.realScores || Array(120).fill("");
+        if(baseScores.length === 0) baseScores = Array(120).fill("");
+
+        const mId = prompt("Enter Match ID to edit (89-104):");
+        const mNum = parseInt(mId);
+        if(isNaN(mNum) || mNum < 89 || mNum > 104) return alert("Invalid entry.");
+
+        let offset = (mNum - 89) * 8;
+        baseScores[offset] = prompt("Team A Name Label:", baseScores[offset]);
+        baseScores[offset+1] = prompt("Team B Name Label:", baseScores[offset+1]);
+        baseScores[offset+2] = prompt("90 Min Reg Goals (Team A):", baseScores[offset+2]);
+        baseScores[offset+3] = prompt("90 Min Reg Goals (Team B):", baseScores[offset+3]);
+
+        if(baseScores[offset+2] === baseScores[offset+3] && baseScores[offset+2] !== "") {
+            baseScores[offset+4] = prompt("Extra Time Accumulation Goals (Team A):", baseScores[offset+4]);
+            baseScores[offset+5] = prompt("Extra Time Accumulation Goals (Team B):", baseScores[offset+5]);
+            if(baseScores[offset+4] === baseScores[offset+5] && baseScores[offset+4] !== "") {
+                baseScores[offset+6] = prompt("Penalties Scored (Team A):", baseScores[offset+6]);
+                baseScores[offset+7] = prompt("Penalties Scored (Team B):", baseScores[offset+7]);
+            }
+        }
+
+        fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "updateRealScores", password: pass, scores: baseScores }) })
+        .then(res => res.json()).then(res => {
+            if(res.status === "UPDATED") { alert("Scores successfully deployed."); location.reload(); }
+            else alert("Error saving records: " + res.message);
+        });
+    }
 </script>
 </body>
 </html>
